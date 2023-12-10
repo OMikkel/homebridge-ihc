@@ -5,11 +5,52 @@
 	"schema": {
 		"type": "object",
 		"properties": {
-			"name": {
-				"title": "Name",
+			"auth": {
+				"title": "Authentication",
+				"type": "object",
+				"properties": {
+					"username": {
+						"title": "Username",
+						"type": "string"
+					},
+					"password": {
+						"title": "Password",
+						"type": "string"
+					},
+					"level": {
+						"title": "Access Level",
+						"type": "string",
+						"enum": ["treeview", "openapi", "administator"]
+					}
+				}
+			},
+			"endpoint": {
+				"title": "Controller Endpoint",
 				"type": "string",
-				"required": true,
-				"default": "Example Dynamic Platform"
+				"placeholder": "http://x.x.x.x"
+			},
+			"devices": {
+				"title": "Devices",
+				"type": "array",
+				"items": {
+					"title": "Device",
+					"type": "object",
+					"properties": {
+						"name": {
+							"title": "Device Name",
+							"type": "string"
+						},
+						"id": {
+							"title": "Device ID",
+							"type": "string"
+						},
+						"type": {
+							"title": "Device Type",
+							"type": "string",
+							"enum": ["light", "switch", "blind", "scene"]
+						}
+					}
+				}
 			}
 		}
 	}
