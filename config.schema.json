@@ -1,5 +1,5 @@
 {
-	"pluginAlias": "homebridge-ihc",
+	"pluginAlias": "HomebridgeIHC",
 	"pluginType": "platform",
 	"singular": true,
 	"schema": {

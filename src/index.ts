@@ -7,5 +7,5 @@ import { HomebridgeIHC } from "./platform";
  * This method registers the platform with Homebridge
  */
 export = (api: API) => {
-	api.registerPlatform(PLATFORM_NAME, HomebridgeIHC);
+    api.registerPlatform(PLATFORM_NAME, HomebridgeIHC);
 };
