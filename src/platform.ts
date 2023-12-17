@@ -10,7 +10,7 @@ import {
 
 import { SOAPRequest } from "./lib/request";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
-import { BasePlatformAccessory } from "./platforms/index"
+import { BasePlatformAccessory } from "./platforms/index";
 
 export class HomebridgeIHC implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -22,17 +22,17 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
         public readonly config: PlatformConfig,
         public readonly api: API
     ) {
-        const request = new SOAPRequest(config.endpoint)
+        const request = new SOAPRequest(config.endpoint);
         this.log.debug("Finished initializing platform:", this.config.name);
 
         this.api.on("didFinishLaunching", async () => {
             log.debug("Executed didFinishLaunching callback");
 
-            const authenticated = await request.authenticate(config.auth)
+            const authenticated = await request.authenticate(config.auth);
             if (authenticated) {
                 this.discoverDevices(request);
             } else {
-                this.log.warn("Terminating - Invalid user credentials")
+                this.log.warn("Terminating - Invalid user credentials");
             }
         });
     }
@@ -44,7 +44,7 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
     }
 
     discoverDevices(request: SOAPRequest) {
-        const devices = this.config.devices
+        const devices = this.config.devices;
 
         for (const device of devices) {
             const uuid = this.api.hap.uuid.generate(device.id);
@@ -64,7 +64,7 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
                 //         break
                 // }
 
-                new BasePlatformAccessory(this, existingAccessory, request)
+                new BasePlatformAccessory(this, existingAccessory, request);
             } else {
                 this.log.info("Adding new accessory:", device.name);
 
@@ -82,7 +82,7 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
                 //         break
                 // }
 
-                new BasePlatformAccessory(this, accessory, request)
+                new BasePlatformAccessory(this, accessory, request);
 
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
             }
