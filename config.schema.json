@@ -20,7 +20,7 @@
 					"level": {
 						"title": "Access Level",
 						"type": "string",
-						"enum": ["treeview", "openapi", "administator"]
+						"enum": ["treeview", "openapi", "administrator"]
 					}
 				}
 			},
@@ -38,17 +38,38 @@
 					"properties": {
 						"name": {
 							"title": "Device Name",
-							"type": "string"
+							"type": "string",
+                            "placeholder": "Ceiling Light"
 						},
 						"id": {
 							"title": "Device ID",
-							"type": "string"
-						},
-						"type": {
-							"title": "Device Type",
 							"type": "string",
-							"enum": ["light", "switch", "blind", "scene"]
-						}
+                            "placeholder": "2300178"
+						},
+                        "type": {
+                            "title": "Device Type",
+                            "type": "string",
+                            "enum": ["light", "switch"]
+                        },
+                        "metadata": {
+                            "title": "Metadata",
+                            "type": "object",
+                            "properties": {
+                                "manufacturer": {
+                                    "title": "Manufacturer",
+                                    "type": "string",
+                                    "placeholder": "LK IHC"
+                                },
+                                "model": {
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "serial": {
+                                    "title": "Serial Number",
+                                    "type": "string"
+                                }
+                            }
+                        }
 					}
 				}
 			}
