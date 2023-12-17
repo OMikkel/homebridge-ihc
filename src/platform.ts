@@ -11,6 +11,7 @@ import {
 import { SOAPRequest } from "./lib/request";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { BasePlatformAccessory } from "./platforms/index";
+import { StatelessSwitchlatformAccessory } from "./platforms/stateless-switch";
 
 export class HomebridgeIHC implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -63,8 +64,12 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
                 //         new SwitchPlatformAccessory(this, existingAccessory, request)
                 //         break
                 // }
+                if (existingAccessory.context.device.type === "button") {
+                    new StatelessSwitchlatformAccessory(this, existingAccessory, request);
+                } else {
+                    new BasePlatformAccessory(this, existingAccessory, request);
+                }
 
-                new BasePlatformAccessory(this, existingAccessory, request);
             } else {
                 this.log.info("Adding new accessory:", device.name);
 
@@ -82,7 +87,11 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
                 //         break
                 // }
 
-                new BasePlatformAccessory(this, accessory, request);
+                if (accessory.context.device.type === "button") {
+                    new StatelessSwitchlatformAccessory(this, accessory, request);
+                } else {
+                    new BasePlatformAccessory(this, accessory, request);
+                }
 
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
             }
