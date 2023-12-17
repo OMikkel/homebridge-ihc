@@ -58,7 +58,7 @@
 							"default": 2000,
 							"minimum": 500,
 							"condition": {
-								"functionBody": "return model.type === 'button';"
+								"functionBody": "return model.devices[arrayIndices].type === 'button';"
 							}
 						},
 						"metadata": {
