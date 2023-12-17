@@ -51,6 +51,16 @@
 							"type": "string",
 							"enum": ["light", "switch", "button"]
 						},
+						"wait": {
+							"title": "Button Wait",
+							"type": "integer",
+							"description": "Time in milliseconds to wait before turning off the switch",
+							"default": 2000,
+							"minimum": 500,
+							"condition": {
+								"functionBody": "return model.type === 'button';"
+							}
+						},
 						"metadata": {
 							"title": "Metadata",
 							"type": "object",

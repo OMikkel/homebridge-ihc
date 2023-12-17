@@ -11,7 +11,7 @@ import {
 import { SOAPRequest } from "./lib/request";
 import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
 import { BasePlatformAccessory } from "./platforms/index";
-import { StatelessSwitchlatformAccessory } from "./platforms/stateless-switch";
+import { ButtonPlatformAccessory } from "./platforms/button";
 
 export class HomebridgeIHC implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -55,17 +55,8 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
             if (existingAccessory) {
                 this.log.info("Restoring existing accessory from cache:", existingAccessory.displayName);
 
-                // switch (existingAccessory.context.device.type) {
-                //     case "light":
-                //         new LightPlatformAccessory(this, existingAccessory, request)
-                //         break
-
-                //     case "switch":
-                //         new SwitchPlatformAccessory(this, existingAccessory, request)
-                //         break
-                // }
                 if (existingAccessory.context.device.type === "button") {
-                    new StatelessSwitchlatformAccessory(this, existingAccessory, request);
+                    new ButtonPlatformAccessory(this, existingAccessory, request);
                 } else {
                     new BasePlatformAccessory(this, existingAccessory, request);
                 }
@@ -77,18 +68,8 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
 
                 accessory.context.device = device;
 
-                // switch (accessory.context.device.type) {
-                //     case "light":
-                //         new LightPlatformAccessory(this, accessory, request)
-                //         break
-
-                //     case "switch":
-                //         new SwitchPlatformAccessory(this, accessory, request)
-                //         break
-                // }
-
                 if (accessory.context.device.type === "button") {
-                    new StatelessSwitchlatformAccessory(this, accessory, request);
+                    new ButtonPlatformAccessory(this, accessory, request);
                 } else {
                     new BasePlatformAccessory(this, accessory, request);
                 }
