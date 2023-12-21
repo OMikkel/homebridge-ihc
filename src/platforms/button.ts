@@ -1,18 +1,12 @@
 import { CharacteristicValue, PlatformAccessory, Service } from "homebridge";
 import { SOAPRequest } from "../lib/request";
 import { HomebridgeIHC } from "../platform";
-
-type State = {
-    value: boolean;
-    typeString: string;
-    resourceID: number;
-    isValueRuntime: boolean;
-};
+import { ResourceState } from "../lib/getResourceState";
 
 export class ButtonPlatformAccessory {
     private readonly buttonWait: number;
     service: Service;
-    state: State = {
+    state: ResourceState = {
         value: false,
         typeString: "",
         resourceID: -1,

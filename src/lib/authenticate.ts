@@ -1,7 +1,14 @@
-import { XMLParser } from "fast-xml-parser"
+import { XMLParser } from "fast-xml-parser";
+import { SOAPRequest } from "./request";
 
-export const authenticate = async (auth: any, endpoint: string): Promise<{success: boolean, cookies: string}> => {
-    const result = await fetch(`${endpoint}/ws/AuthenticationService`, {
+export type Auth = {
+    username: string;
+    password: string;
+    level: "treeview" | "openapi" | "administrator";
+};
+
+export const authenticate = async (SOAPRequest: SOAPRequest, auth: Auth): Promise<{ success: boolean; cookies: string }> => {
+    const result = await fetch(SOAPRequest.endpointURL("AuthenticationService"), {
         method: "POST",
         headers: {
             "Content-Type": "text/xml",
@@ -19,29 +26,29 @@ export const authenticate = async (auth: any, endpoint: string): Promise<{succes
 </soapenv:Envelope>
         `
     }).then(async (res) => {
-        const parser = new XMLParser()
-        const cookies = res.headers.get("set-cookie")
-        const body = await res.text()
-        const parsedXML = parser.parse(body)
-        if (parsedXML['SOAP-ENV:Envelope']["SOAP-ENV:Body"]["ns1:authenticate2"]["ns1:loginWasSuccessful"]) {
+        const parser = new XMLParser();
+        const cookies = res.headers.get("set-cookie");
+        const body = await res.text();
+        const parsedXML = parser.parse(body);
+        if (parsedXML["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:authenticate2"]["ns1:loginWasSuccessful"]) {
             return {
                 success: true,
                 cookies: cookies || ""
-            }
+            };
         } else {
-            console.error("Invalid user credentials")
+            SOAPRequest.platform.log.debug("Invalid user credentials");
             return {
                 success: false,
                 cookies: ""
-            }
+            };
         }
     }).catch(err => {
-        console.log(err)
+        SOAPRequest.platform.log.debug(err);
         return {
             success: false,
             cookies: ""
-        }
-    })
+        };
+    });
 
-    return result
-}
+    return result;
+};

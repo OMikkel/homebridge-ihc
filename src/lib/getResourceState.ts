@@ -1,13 +1,20 @@
-import { XMLParser } from "fast-xml-parser"
+import { XMLParser } from "fast-xml-parser";
+import { SOAPRequest } from "./request";
 
-// @ts-ignore
-export const getResourceState = async (lightId: any, cookies: string, endpoint: string): Promise<{value: boolean, typeString: "", resourceID: number, isValueRuntime: boolean}> => {
-    const result = await fetch(`${endpoint}/ws/ResourceInteractionService`, {
+export type ResourceState = {
+    value: boolean;
+    typeString: string;
+    resourceID: number;
+    isValueRuntime: boolean;
+};
+
+export const getResourceState = async (SOAPRequest: SOAPRequest, lightId: string): Promise<ResourceState> => {
+    const result = await fetch(SOAPRequest.endpointURL("ResourceInteractionService"), {
         method: "POST",
         headers: {
             "Content-Type": "text/xml",
             "SOAPAction": "getRuntimeValue",
-            "Cookie": cookies
+            "Cookie": SOAPRequest.cookies
         },
         body: `
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -17,25 +24,38 @@ export const getResourceState = async (lightId: any, cookies: string, endpoint: 
 </soapenv:Envelope>
         `
     }).then(async (res) => {
-        const parser = new XMLParser()
-        const body = await res.text()
-        const parsedXML = parser.parse(body)
-        return {
-            value: parsedXML["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getRuntimeValue2"]["ns1:value"]["ns2:value"] as boolean,
-            typeString: parsedXML["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getRuntimeValue2"]["ns1:typeString"] as string,
-            resourceID: parsedXML["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getRuntimeValue2"]["ns1:resourceID"] as number,
-            isValueRuntime: parsedXML["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getRuntimeValue2"]["ns1:isValueRuntime"] as boolean,
+        const parser = new XMLParser();
+        const body = await res.text();
+        const parsedXML = parser.parse(body)["SOAP-ENV:Envelope"]["SOAP-ENV:Body"];
+
+        if (parsedXML?.["SOAP-ENV:Fault"]) {
+            SOAPRequest.platform.log.debug("Not authenticated, reauthenticating");
+            const authenticated = await SOAPRequest.authenticate({
+                username: SOAPRequest.platform.config.username,
+                password: SOAPRequest.platform.config.password,
+                level: SOAPRequest.platform.config.level
+            });
+            if (!authenticated) {
+                throw new Error("Attempt to reauthenticate failed");
+            }
+            return SOAPRequest.getResourceValue(lightId);
         }
+
+        return {
+            value: parsedXML["ns1:getRuntimeValue2"]["ns1:value"]["ns2:value"] as boolean,
+            typeString: parsedXML["ns1:getRuntimeValue2"]["ns1:typeString"] as string,
+            resourceID: parsedXML["ns1:getRuntimeValue2"]["ns1:resourceID"] as number,
+            isValueRuntime: parsedXML["ns1:getRuntimeValue2"]["ns1:isValueRuntime"] as boolean,
+        };
     }).catch(err => {
-        console.log(err)
+        SOAPRequest.platform.log.debug(err);
         return {
             value: false,
             typeString: "",
             resourceID: -1,
             isValueRuntime: false
-        }
-    })
+        };
+    });
 
-    // @ts-ignore
-    return result
-}
+    return result;
+};

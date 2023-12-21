@@ -23,7 +23,7 @@ export class HomebridgeIHC implements DynamicPlatformPlugin {
         public readonly config: PlatformConfig,
         public readonly api: API
     ) {
-        const request = new SOAPRequest(config.endpoint);
+        const request = new SOAPRequest(this);
         this.log.debug("Finished initializing platform:", this.config.name);
 
         this.api.on("didFinishLaunching", async () => {
