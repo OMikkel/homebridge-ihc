@@ -5,6 +5,7 @@ export type Auth = {
     username: string;
     password: string;
     level: "treeview" | "openapi" | "administrator";
+    interval: number;
 };
 
 export const authenticate = async (SOAPRequest: SOAPRequest, auth: Auth): Promise<{ success: boolean; cookies: string }> => {
@@ -52,3 +53,6 @@ export const authenticate = async (SOAPRequest: SOAPRequest, auth: Auth): Promis
 
     return result;
 };
+
+//wait for 5 seconds
+export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

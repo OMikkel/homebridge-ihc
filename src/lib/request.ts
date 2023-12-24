@@ -4,7 +4,7 @@ import { ResourceState, getResourceState } from "./getResourceState";
 import { setResourceState } from "./setResourceState";
 
 export class SOAPRequest {
-    cookies;
+    cookies = "";
     readonly platform: HomebridgeIHC;
     private readonly endpoint: string;
 
@@ -24,7 +24,23 @@ export class SOAPRequest {
     async authenticate(auth: Auth) {
         const { success, cookies } = await authenticate(this, auth);
         this.cookies = cookies;
+        this.keepSessionAlive(auth);
         return success;
+    }
+
+    private async keepSessionAlive(auth: Auth) {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            this.platform.log.debug("Keeping session alive");
+            await new Promise(resolve => setTimeout(resolve, auth.interval * 60 * 1000));
+            const { success, cookies } = await authenticate(this, auth);
+            if (success) {
+                this.platform.log.debug("Session kept alive");
+                this.cookies = cookies;
+            } else {
+                this.platform.log.debug("Failed to reauthenticate", JSON.stringify({ success, cookies, auth, currentCookies: this.cookies }));
+            }
+        }
     }
 
     async getResourceValue(lightId: string) {

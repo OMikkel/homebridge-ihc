@@ -30,11 +30,7 @@ export const getResourceState = async (SOAPRequest: SOAPRequest, lightId: string
 
         if (parsedXML?.["SOAP-ENV:Fault"]) {
             SOAPRequest.platform.log.debug("Not authenticated, reauthenticating");
-            const authenticated = await SOAPRequest.authenticate({
-                username: SOAPRequest.platform.config.username,
-                password: SOAPRequest.platform.config.password,
-                level: SOAPRequest.platform.config.level
-            });
+            const authenticated = await SOAPRequest.authenticate(SOAPRequest.platform.config.auth);
             if (!authenticated) {
                 throw new Error("Attempt to reauthenticate failed");
             }
@@ -48,7 +44,7 @@ export const getResourceState = async (SOAPRequest: SOAPRequest, lightId: string
             isValueRuntime: parsedXML["ns1:getRuntimeValue2"]["ns1:isValueRuntime"] as boolean,
         };
     }).catch(err => {
-        SOAPRequest.platform.log.debug(err);
+        SOAPRequest.platform.log.debug(err, JSON.stringify({ currentCookies: SOAPRequest.cookies, config: SOAPRequest.platform.config }));
         return {
             value: false,
             typeString: "",

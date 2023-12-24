@@ -21,6 +21,12 @@
 						"title": "Access Level",
 						"type": "string",
 						"enum": ["treeview", "openapi", "administrator"]
+					},
+					"interval": {
+						"title": "Polling Interval",
+						"type": "integer",
+						"description": "Minutes between each poll",
+						"default": 5
 					}
 				}
 			},
