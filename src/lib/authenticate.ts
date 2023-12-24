@@ -53,6 +53,3 @@ export const authenticate = async (SOAPRequest: SOAPRequest, auth: Auth): Promis
 
     return result;
 };
-
-//wait for 5 seconds
-export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

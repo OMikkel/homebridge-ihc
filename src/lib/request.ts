@@ -35,7 +35,7 @@ export class SOAPRequest {
             await new Promise(resolve => setTimeout(resolve, auth.interval * 60 * 1000));
             const { success, cookies } = await authenticate(this, auth);
             if (success) {
-                this.platform.log.debug("Session kept alive");
+                this.platform.log.debug("Session kept alive", JSON.stringify({ success, cookies, auth, currentCookies: this.cookies }));
                 this.cookies = cookies;
             } else {
                 this.platform.log.debug("Failed to reauthenticate", JSON.stringify({ success, cookies, auth, currentCookies: this.cookies }));
