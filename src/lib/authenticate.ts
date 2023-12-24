@@ -13,7 +13,8 @@ export const authenticate = async (SOAPRequest: SOAPRequest, auth: Auth): Promis
         method: "POST",
         headers: {
             "Content-Type": "text/xml",
-            "SOAPAction": "authenticate"
+            "SOAPAction": "authenticate",
+            "Cookie": SOAPRequest.cookies,
         },
         body: `
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
